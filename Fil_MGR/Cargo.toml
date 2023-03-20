@@ -1,5 +1,5 @@
 [package]
-name = "my-file-control-app"
+name = "file-manager-app"
 version = "0.1.0"
 edition = "2021"
 
