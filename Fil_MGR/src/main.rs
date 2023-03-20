@@ -44,7 +44,7 @@ enum Commands {
     Cyfile(AddArgs),
 
     /// move or rename file
-    MoRfile(AddArgs),
+    Morfile(AddArgs),
 }
 
 fn travel_directory(file_name:&Vec<String>, is_directory:&bool) -> Result<(), Box<dyn Error>> {
@@ -148,7 +148,7 @@ fn main() {
             }
             else {println!("Error: Please Enter correct format!!");}
         },
-        Commands::MoRfile(name) => {
+        Commands::Morfile(name) => {
             if name.path.len() == 2 {
                 if let Err(error) = mvrnfile_func(&name.path) {println!("Error message: {}",error);}
             }
