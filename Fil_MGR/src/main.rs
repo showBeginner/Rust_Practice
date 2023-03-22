@@ -112,7 +112,7 @@ fn zip_myfile(target:File,src_dir:&String,enttry:&mut dyn Iterator<Item = DirEnt
             zip.write_all(&buf)?;
             buf.clear();
         }
-        else {
+        else if name.as_os_str().len() != 0{
             zip.add_directory(name.to_string_lossy(), options)?;
         }
     }
