@@ -1,9 +1,10 @@
 #[warn(unused_variables)]
 use std::{error::Error};
-use std::{result::Result, io::{self, Write}};
+use std::{result::Result, io::{self, Write, Read}, fs::File};
 use clap::{Parser, Subcommand, Args};
-use walkdir::WalkDir;
+use walkdir::{WalkDir, DirEntry};
 use std::fs;
+use zip::write::FileOptions;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -28,6 +29,15 @@ struct AddArgsshow {
     path: String,
 
 }
+#[derive(Args)]
+struct Addzip {
+    /// Enter  path , Default current directory
+    path: String,
+
+    ///zip file name
+    target_name: String,
+
+}
 
 #[derive(Subcommand)]
 enum Commands {
@@ -45,6 +55,9 @@ enum Commands {
 
     /// move or rename file
     Morfile(AddArgs),
+
+    ///Zip file
+    Ziiff(Addzip),
 }
 
 fn travel_directory(file_name:&Vec<String>, is_directory:&bool) -> Result<(), Box<dyn Error>> {
@@ -61,6 +74,51 @@ fn travel_directory(file_name:&Vec<String>, is_directory:&bool) -> Result<(), Bo
         }
     }
 
+    Ok(())
+}
+
+fn compress_target_dir(input_dir:&String,target_name:&String) -> std::result::Result<(),Box<dyn Error>>{
+    let zip_file = std::fs::File::create(target_name)?;
+    let dir = WalkDir::new(input_dir);
+
+    let result = zip_myfile(zip_file, input_dir,&mut dir.into_iter().filter_map(|e| e.ok()));
+
+    match result {
+        Ok(_value) => {
+            println!("Compress target Successful!!!!!!");
+        }
+        Err(error) => {
+            println!("Compress target Failed: {:?}",error);
+        }
+    }
+    
+    
+    Ok(())
+}
+
+fn zip_myfile(target:File,src_dir:&String,enttry:&mut dyn Iterator<Item = DirEntry>) -> Result<(),Box<dyn Error>> {
+    let mut buf = Vec::new();
+    let mut zip = zip::ZipWriter::new(target);
+    let options = zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
+
+    for entry in enttry{
+        let path = entry.path();
+        let name = path.strip_prefix(src_dir).unwrap();
+        if path.is_file() {
+            println!("adding file {:?} as {:?} ...",path,name);
+            zip.start_file(name.to_string_lossy(), options)?;
+            let mut f = File::open(path)?;
+            f.read_to_end(&mut buf)?;
+            zip.write_all(&buf)?;
+            buf.clear();
+        }
+        else {
+            zip.add_directory(name.to_string_lossy(), options)?;
+        }
+    }
+    // Apply the changes you've made.
+    // Dropping the `ZipWriter` will have the same effect, but may silently fail
+    zip.finish()?;
     Ok(())
 }
 
@@ -153,6 +211,11 @@ fn main() {
                 if let Err(error) = mvrnfile_func(&name.path) {println!("Error message: {}",error);}
             }
             else {println!("Error: Please Enter correct format!!");}
+        },
+        Commands::Ziiff(name) => {
+            if let Err(error) = compress_target_dir(&name.path, &name.target_name) {
+                println!("Error message: {}",error);
+            }
         }
     }
 
