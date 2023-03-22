@@ -1,6 +1,6 @@
 #[warn(unused_variables)]
 use std::{error::Error};
-use std::{result::Result, io::{self, Write, Read}, fs::File};
+use std::{result::Result, io::{self, Write, Read}, fs::File, path::PathBuf};
 use clap::{Parser, Subcommand, Args};
 use walkdir::{WalkDir, DirEntry};
 use std::fs;
@@ -36,6 +36,10 @@ struct Addzip {
 
     ///zip file name
     target_name: String,
+
+
+    ///if Compress file
+    is_file:bool,
 
 }
 
@@ -82,6 +86,27 @@ fn compress_target_dir(input_dir:&String,target_name:&String) -> std::result::Re
     let dir = WalkDir::new(input_dir);
 
     let result = zip_myfile(zip_file, input_dir,&mut dir.into_iter().filter_map(|e| e.ok()));
+
+    match result {
+        Ok(_value) => {
+            println!("Compress target Successful!!!!!!");
+        }
+        Err(error) => {
+            println!("Compress target Failed: {:?}",error);
+        }
+    }
+    
+    
+    Ok(())
+}
+
+fn compress_target_file(input_dir:&String,target_name:&String) -> std::result::Result<(),Box<dyn Error>>{
+    let zip_file = std::fs::File::create(target_name)?;
+    let dir = WalkDir::new(input_dir);
+
+    let convert = PathBuf::from(&input_dir);
+    let _prefix = convert.parent().map_or_else(|| "/",|p| p.to_str().unwrap());
+    let result = zip_myfile(zip_file, &_prefix.to_string(),&mut dir.into_iter().filter_map(|e| e.ok()));
 
     match result {
         Ok(_value) => {
@@ -213,9 +238,17 @@ fn main() {
             else {println!("Error: Please Enter correct format!!");}
         },
         Commands::Ziiff(name) => {
-            if let Err(error) = compress_target_dir(&name.path, &name.target_name) {
-                println!("Error message: {}",error);
+            if !name.is_file {
+                if let Err(error) = compress_target_dir(&name.path, &name.target_name) {
+                    println!("Error message: {}",error);
+                }
             }
+            else {
+                if let Err(error) = compress_target_file(&name.path, &name.target_name) {
+                    println!("Error message: {}",error);
+                }
+            }
+            
         }
     }
 
