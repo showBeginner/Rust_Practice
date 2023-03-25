@@ -1,6 +1,6 @@
 #[warn(unused_variables)]
 use std::{error::Error};
-use std::{result::Result, io::{self, Write, Read, Seek}, fs::File, path::PathBuf, string};
+use std::{result::Result, io::{self, Write, Read}, fs::File, path::PathBuf};
 use clap::{Parser, Subcommand, Args};
 use walkdir::{WalkDir, DirEntry};
 use std::fs;
