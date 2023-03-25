@@ -1,6 +1,6 @@
 #[warn(unused_variables)]
 use std::{error::Error};
-use std::{result::Result, io::{self, Write, Read}, fs::File, path::PathBuf};
+use std::{result::Result, io::{self, Write, Read, Seek}, fs::File, path::PathBuf, string};
 use clap::{Parser, Subcommand, Args};
 use walkdir::{WalkDir, DirEntry};
 use std::fs;
@@ -62,6 +62,9 @@ enum Commands {
 
     ///Zip file
     Ziiff(Addzip),
+
+    ///Extract zip file
+    Exxtr(Addzip),
 }
 
 fn travel_directory(file_name:&Vec<String>, is_directory:&bool) -> Result<(), Box<dyn Error>> {
@@ -77,6 +80,17 @@ fn travel_directory(file_name:&Vec<String>, is_directory:&bool) -> Result<(), Bo
             println!("{}",_dir.display().to_string().replace("\\", "/"));
         }
     }
+
+    Ok(())
+}
+
+fn extra_target_file(src_path:&String, ds_path:&String) -> std::result::Result<(),Box<dyn Error>> {
+    let convert = PathBuf::from(&src_path);
+    let target = std::fs::File::open(&convert)?;
+    let mut zip = zip::ZipArchive::new(target)?;
+
+    zip.extract(&ds_path).map_err(|e| format!("Fail to extract {:?} : {}",ds_path,e))?;
+
 
     Ok(())
 }
@@ -249,6 +263,10 @@ fn main() {
                 }
             }
             
+        },
+        Commands::Exxtr(name) => {
+            if let Err(error) = extra_target_file(&name.path,&name.target_name) 
+            {println!("Error message: {}",error);}
         }
     }
 
