@@ -39,6 +39,7 @@ struct Addzip {
 
 
     ///if Compress file
+    #[arg(short='f', long="file")]
     is_file:bool,
 
 }
