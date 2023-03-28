@@ -1,3 +1,6 @@
+
+mod cli_lib{mod imp_method;}
+
 use pulldown_cmark::{Parser, Options, html};
 use std::fs::File;
 use std::io::BufReader;
