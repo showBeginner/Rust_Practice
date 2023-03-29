@@ -3,10 +3,25 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
-struct Cli {
+pub(crate) struct Cli {
+
+    /// View target markdown file
+    markdown_file: String,
+
     #[command(subcommand)]
     command: Option<Commands>,
 }
+
+impl Cli {
+    pub(crate) fn parse_fn() -> Cli {
+        Cli::parse()
+    }
+
+    pub(crate) fn get_arg(&self) -> Option<&String> {
+        Some(&self.markdown_file)
+    }
+}
+
 
 #[derive(Subcommand)]
 enum Commands {
