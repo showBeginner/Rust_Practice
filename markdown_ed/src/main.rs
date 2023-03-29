@@ -11,15 +11,23 @@ use std::path::Path;
 
 
 
-fn main() ->std::io::Result<()>{
+fn main() {
 
     let _par = Cli::parse_fn();
-
+    let mut target_file = String::new();
     if let Some(_file_name) = _par.get_arg() {
-        println!("Value for file name: {}",_file_name);
+        println!("Value for file name: {}",&_file_name);
+        target_file.clone_from(_file_name);
     }
 
-    file_read(Path::new("./README.md"))?;
+    match file_read(Path::new(&target_file)) {
+        Ok(_value) => { 
+            // pass _value to gtk and display view
+            println!("Convert html value: \n{}",_value); 
+        },
+        Err(error) => {
+            println!("Error: {}",error);
+        }
+    }
     println!("Hello, world!");
-    Ok(())
 }
