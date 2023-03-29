@@ -1,12 +1,17 @@
 
-mod cli_lib{mod imp_method;}
+mod cli_lib {
+    mod imp_method;
+    pub(crate) mod cli_struct;
+}
+
 
 use pulldown_cmark::{Parser, Options, html};
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
-use std::io::stdin;
 use std::path::Path;
+
+use crate::cli_lib::cli_struct::Cli;
 
 
 fn file_read(file_name:&Path) ->std::io::Result<()>{
@@ -38,10 +43,12 @@ fn file_read(file_name:&Path) ->std::io::Result<()>{
 
 
 fn main() ->std::io::Result<()>{
-    let mut src_name = String::new();
-    let input = stdin();
-    input.read_line(&mut src_name)?;
-    println!("Get: {}",src_name);
+
+    let _par = Cli::parse_fn();
+
+    if let Some(_file_name) = _par.get_arg() {
+        println!("Value for file name: {}",_file_name);
+    }
 
     file_read(Path::new("./README.md"))?;
     println!("Hello, world!");
