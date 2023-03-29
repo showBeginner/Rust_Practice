@@ -6,6 +6,7 @@ use clap::{Parser, Subcommand};
 pub(crate) struct Cli {
 
     /// View target markdown file
+    #[arg(short, long, value_name = "FILE NAME")]
     markdown_file: String,
 
     #[command(subcommand)]
