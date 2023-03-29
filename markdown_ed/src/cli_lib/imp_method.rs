@@ -4,7 +4,7 @@ use std::io::BufReader;
 use std::io::prelude::*;
 use std::path::Path;
 
-pub(crate) fn file_read(file_name:&Path) ->std::io::Result<()>{
+pub(crate) fn file_read(file_name:&Path) ->std::io::Result<String>{
     let file = File::open(file_name)?;
     let mut buf_reader = BufReader::new(file);
     let mut contents = String::new();
@@ -28,5 +28,6 @@ pub(crate) fn file_read(file_name:&Path) ->std::io::Result<()>{
     println!("orignal: {:?}",contents);
     println!("html: {:?}",html_output);
 
-    Ok(())
+    Ok(html_output)
+
 }
