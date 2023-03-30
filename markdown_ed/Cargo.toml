@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.1.14", features = ["derive"] }
 pulldown-cmark = "0.7.0"
+egui = "0.21.0"
+webview = "0.1.1"
