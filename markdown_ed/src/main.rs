@@ -22,7 +22,6 @@ fn main() {
 
     match file_read(Path::new(&target_file)) {
         Ok(_value) => { 
-            // pass _value to gtk and display view
             println!("Convert html value: \n{}",_value); 
         },
         Err(error) => {
