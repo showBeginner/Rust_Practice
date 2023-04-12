@@ -8,11 +8,29 @@ mod cli_lib {
 
 use crate::cli_lib::{cli_struct::Cli, imp_method::file_read};
 use std::path::Path;
+use web_view::{WebViewBuilder, Content};
 
 
 
-fn main() {
+pub fn ui_main(html_content:&str) {
+    WebViewBuilder::new()
+        .title("Minimal webview example")
+        .content(Content::Html(html_content))
+        .size(800, 600)
+        .resizable(true)
+        .debug(true)
+        .user_data(())
+        .invoke_handler(|_webview, _arg| Ok(()))
+        .build()
+        .unwrap()
+        .run()
+        .unwrap();
+}
 
+
+fn main(){
+
+    
     let _par = Cli::parse_fn();
     let mut target_file = String::new();
     if let Some(_file_name) = _par.get_arg() {
@@ -23,10 +41,12 @@ fn main() {
     match file_read(Path::new(&target_file)) {
         Ok(_value) => { 
             println!("Convert html value: \n{}",_value); 
+            ui_main(&_value);
         },
         Err(error) => {
             println!("Error: {}",error);
         }
     }
     println!("Hello, world!");
+
 }
