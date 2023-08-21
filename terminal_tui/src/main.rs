@@ -74,39 +74,42 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: &mut App) -> io::Res
                     _ => {}
                 }
             }
-            match app.get_input_mode() {
-                InputMode::Normal => match key.code {
-                    KeyCode::Char('i') => {
-                        app.set_input_mode(InputMode::Editing);
-                    }
-                    KeyCode::Char('q') => {
-                        return Ok(());
+            else{
+                match app.get_input_mode() {
+                    InputMode::Normal => match key.code {
+                        KeyCode::Char('i') => {
+                            app.set_input_mode(InputMode::Editing);
+                        }
+                        KeyCode::Char('q') => {
+                            return Ok(());
+                        },
+                        KeyCode::Char('p') => {
+                            app.set_popup(true);
+                        },
+                        KeyCode::Down => app.item_next(),
+                        KeyCode::Up => app.item_previous(),
+                        KeyCode::Delete => app.item_clear(),
+                        _ => {}
                     },
-                    KeyCode::Char('p') => {
-                        app.set_popup(false);
+                    InputMode::Editing => match key.code {
+                        KeyCode::Enter => {
+                            //app.messages.push(app.input.drain(..).collect());
+                        }
+                        KeyCode::Char(c) => {
+                            app.input_push(c);
+                        }
+                        KeyCode::Backspace => {
+                            app.input_pop();
+                        }
+                        KeyCode::Esc => {
+                            app.set_input_mode(InputMode::Normal);
+                            app.input_clear();
+                        }
+                        _ => {}
                     },
-                    KeyCode::Down => app.items.next(),
-                    KeyCode::Up => app.items.previous(),
-                    KeyCode::Delete => app.items.clear_items(),
-                    _ => {}
-                },
-                InputMode::Editing => match key.code {
-                    KeyCode::Enter => {
-                        //app.messages.push(app.input.drain(..).collect());
-                    }
-                    KeyCode::Char(c) => {
-                        app.get_input().push(c);
-                    }
-                    KeyCode::Backspace => {
-                        app.get_input().pop();
-                    }
-                    KeyCode::Esc => {
-                        app.set_input_mode(InputMode::Normal);
-                        app.get_input().clear();
-                    }
-                    _ => {}
-                },
-            };
+                };
+            }
+            
 
         }
     }
