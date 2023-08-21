@@ -156,13 +156,6 @@ fn ui <B: Backend>(f: &mut Frame<B>,app: &mut App) {
     let help_message = Paragraph::new(text);
     f.render_widget(help_message, left_chunks[0]);
 
-    let input = Paragraph::new(app.get_input().as_ref())
-        .style(match app.get_input_mode() {
-            InputMode::Normal => Style::default(),
-            InputMode::Editing => Style::default().fg(Color::Yellow),
-        })
-        .block(Block::default().borders(Borders::ALL).title("Search Bar"));
-    f.render_widget(input, left_chunks[1]);
     match app.get_input_mode() {
         InputMode::Normal =>{
             // Hide the cursor. `Frame` does this by default, so we don't need to do anything here
@@ -171,12 +164,21 @@ fn ui <B: Backend>(f: &mut Frame<B>,app: &mut App) {
             // Make the cursor visible and ask tui-rs to put it at the specified coordinates after rendering
             f.set_cursor(
                 // Put cursor past the end of the input text
-                left_chunks[1].x + app.get_input().width() as u16 + 1,
+                left_chunks[1].x + app.get_input().width() as u16 + 1 ,
                 // Move one line down, from the border to the input line
                 left_chunks[1].y + 1,
             )
         }
     }
+
+    let input = Paragraph::new(app.get_input().as_ref())
+        .style(match app.get_input_mode() {
+            InputMode::Normal => Style::default(),
+            InputMode::Editing => Style::default().fg(Color::Yellow),
+        })
+        .block(Block::default().borders(Borders::ALL).title("Search Bar"));
+    f.render_widget(input, left_chunks[1]);
+    
 
     let items: Vec<ListItem> = app
         .items
