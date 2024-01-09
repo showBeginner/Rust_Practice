@@ -1,6 +1,5 @@
 mod adb_method;
-use native_dialog::{FileDialog};
-use std::thread;
+use native_dialog::FileDialog;
 
 pub(crate) enum Adbcommand {
     Root,
