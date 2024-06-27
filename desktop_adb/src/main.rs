@@ -1,21 +1,8 @@
-mod adb_lib {
-    pub(crate) mod adb_struct;
-}
-use crate::adb_lib::adb_struct::{AdbCli, controll_command, Adbcommand};
+mod utils;
+use crate::utils::adb::{AdbCli, controll_command, Adbcommand};
 use iced::executor;
 use iced::{Application, Command, Element, Settings, Theme, Length};
 use iced::widget::{column, row, button, container, text};
-
-fn main() -> iced::Result {
-    Desktop::run(Settings {
-        default_text_size: 20 as f32,
-        ..Settings::default()
-    })
-}
-
-struct Desktop {
-    adb_client: AdbCli,
-}
 
 #[derive(Debug, Clone)]
 enum Message {
@@ -24,6 +11,9 @@ enum Message {
     Select,
 }
 
+struct Desktop {
+    adb_client: AdbCli,
+}
 
 impl Application for Desktop {
     type Executor = executor::Default;
@@ -51,7 +41,7 @@ impl Application for Desktop {
                 controll_command(&mut self.adb_client, Adbcommand::Install);
             }
             Message::Select => {
-                controll_command(&mut self.adb_client, Adbcommand::Select)
+                controll_command(&mut self.adb_client, Adbcommand::Select);
             }
         }
         Command::none()
@@ -98,4 +88,11 @@ impl Application for Desktop {
             .center_y()
             .into()
     }
+}
+
+fn main() -> iced::Result {
+    Desktop::run(Settings {
+        default_text_size: 20 as f32,
+        ..Settings::default()
+    })
 }

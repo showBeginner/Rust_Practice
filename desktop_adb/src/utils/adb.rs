@@ -1,4 +1,4 @@
-mod adb_method;
+use crate::utils::cmd_utils::exe_cmd;
 use native_dialog::FileDialog;
 
 pub(crate) enum Adbcommand {
@@ -18,10 +18,10 @@ impl AdbCli{
 
     pub(crate) fn new() -> AdbCli{
         let client = AdbCli {
-            devices: adb_method::get_devices_via_adb(),
+            devices: exe_cmd::get_devices_via_adb(),
             files: vec![],
         };
-        adb_method::root_devices(client.get_devices());
+        exe_cmd::root_devices(client.get_devices());
         client
     }
 
@@ -52,10 +52,10 @@ fn select_files(client: &mut AdbCli) {
 
 pub(crate) fn controll_command(client: &mut AdbCli, cli: Adbcommand){
     match cli {
-        Adbcommand::Root => adb_method::root_devices(client.get_devices()),
-        Adbcommand::Devices => client.devices = adb_method::get_devices_via_adb(),
+        Adbcommand::Root => exe_cmd::root_devices(client.get_devices()),
+        Adbcommand::Devices => client.devices = exe_cmd::get_devices_via_adb(),
         Adbcommand::Install => {
-            adb_method::install_apk_for_all_devices(client.get_devices(), client.get_files());
+            exe_cmd::install_apk_for_all_devices(client.get_devices(), client.get_files());
             client.clear_files();
         },
         Adbcommand::Select => select_files(client),
